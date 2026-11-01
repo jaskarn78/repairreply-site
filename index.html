@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RepairReply · Follow up on every estimate, from your shop's number</title>
+<meta name="description" content="RepairReply reads your CCC ONE estimates, texts the customers who went quiet, and brings their replies to one inbox you can answer from your phone. $199 a month per location, first 30 days free.">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  --floor:#EDEFF2;        /* shop floor: cool grey, not cream */
+  --panel:#FFFFFF;
+  --primer:#D9DDE3;       /* hairlines, primer grey */
+  --ink:#14213B;
+  --ink-2:#44536B;
+  --ink-3:#7A879B;
+  --navy:#1A2D4D;
+  --red:#C8202F;
+  --red-dark:#A81828;
+  --tape:#F2C14E;         /* masking tape */
+  --tape-ink:#5A4206;
+  --green:#1F7A52;
+  --bubble-out:#1A2D4D;
+  --bubble-in:#E6EAF2;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --max:1180px;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--floor);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* type */
+h1,h2,h3{font-family:var(--display);font-variation-settings:"wdth" 112;font-weight:800;letter-spacing:-.025em;line-height:1.02;margin:0}
+h1{font-size:clamp(40px,5.2vw,64px);font-variation-settings:"wdth" 106}
+h2{font-size:clamp(30px,4vw,48px)}
+h3{font-size:22px;font-variation-settings:"wdth" 100;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+p{margin:0}
+.lede{font-size:clamp(18px,1.6vw,21px);color:var(--ink-2);max-width:34em}
+.mono{font-family:var(--mono);font-size:13px;letter-spacing:.02em}
+
+/* tape label: the one decorative device, used only as section eyebrows */
+.tape{display:inline-block;font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tape-ink);background:var(--tape);padding:7px 14px 6px;transform:rotate(-1.2deg);position:relative;margin-bottom:18px}
+.tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:6px;background:linear-gradient(to right,rgba(255,255,255,.55),transparent)}
+.tape::before{left:0}.tape::after{right:0;transform:scaleX(-1)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-variation-settings:"wdth" 100;font-weight:700;font-size:17px;padding:16px 24px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-decoration:none;transition:transform .12s ease,background .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-dark)}
+.btn-line{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-line:hover{background:#fff}
+.btn svg{width:18px;height:18px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:10;background:rgba(237,239,242,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--primer)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-variation-settings:"wdth" 105;font-weight:800;font-size:22px;letter-spacing:-.03em}
+.brand img{width:30px;height:30px}
+.brand span span{font-weight:600;color:var(--ink-2)}
+.nav-links{display:flex;gap:28px;align-items:center;font-weight:500;font-size:15.5px}
+.nav-links a{text-decoration:none;color:var(--ink-2)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.btn-red{color:#fff}
+.nav-links .btn{padding:11px 18px;font-size:15px}
+@media (max-width:760px){.nav-links a:not(.btn){display:none}}
+
+/* hero */
+.hero{padding:72px 0 40px}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .lede{margin:26px 0 34px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.cta-note{font-size:14.5px;color:var(--ink-3);margin-top:14px}
+.trust{margin-top:46px;padding-top:22px;border-top:1px solid var(--primer);display:grid;grid-template-columns:repeat(3,1fr);gap:20px;color:var(--ink-2);font-size:14px}
+@media (max-width:520px){.trust{grid-template-columns:1fr 1fr}}
+.trust b{display:block;font-family:var(--display);font-variation-settings:"wdth" 110;font-size:24px;margin-bottom:2px;color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:40px}.hero{padding-top:44px}}
+
+/* the signature: a real week, told as the texts it produces */
+.thread{background:var(--panel);border:1px solid var(--primer);border-radius:20px;padding:22px 22px 18px;box-shadow:0 24px 60px -30px rgba(20,33,59,.35)}
+.thread-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--primer);margin-bottom:8px}
+.thread-head .who{font-weight:600}
+.thread-head .who small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-3);font-weight:400}
+.line-pill{font-family:var(--mono);font-size:11.5px;color:var(--green);background:#E6F4EC;padding:5px 10px;border-radius:999px}
+.day{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:var(--ink-3);font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.day::after{content:"";flex:1;height:1px;background:var(--primer)}
+.day b{color:var(--ink);font-weight:600}
+.ev{display:flex;gap:10px;align-items:flex-start;margin:8px 0;max-width:86%}
+.ev.sys{display:block;max-width:100%;background:#F5F6F8;border:1px dashed var(--primer);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink-2)}
+.ev.sys .mono{color:var(--ink-3)}
+.ev.out{margin-left:auto;flex-direction:row-reverse}
+.bub{padding:11px 14px;border-radius:16px;font-size:15px;line-height:1.4}
+.out .bub{background:var(--bubble-out);color:#fff;border-bottom-right-radius:4px}
+.in .bub{background:var(--bubble-in);color:var(--ink);border-bottom-left-radius:4px}
+.meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:5px}
+.out .meta{text-align:right}
+.meta .auto{color:#B7791F}
+.ev.booked{max-width:100%;background:#E6F4EC;border-radius:10px;padding:10px 12px;font-size:14px;color:var(--green);font-weight:600}
+/* load-in */
+.thread [data-step]{opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s ease}
+.thread.play [data-step]{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.thread [data-step]{opacity:1;transform:none;transition:none}}
+
+/* sections */
+section{padding:84px 0}
+.sec-head{max-width:40em;margin-bottom:40px}
+.sec-head p{margin-top:16px}
+
+/* week: the sequence, numbered by day because the days are the product */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.wk{background:var(--panel);border:1px solid var(--primer);border-radius:var(--r);padding:20px 18px 22px;min-height:190px;display:flex;flex-direction:column}
+.wk .d{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:900;font-size:34px;letter-spacing:-.03em;line-height:1}
+.wk .d small{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-bottom:6px}
+.wk h3{font-size:17px;margin:14px 0 6px}
+.wk p{font-size:14.5px;color:var(--ink-2);flex:1}
+.wk .tag{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.wk.red{background:var(--navy);color:#fff;border-color:var(--navy)}
+.wk.red p,.wk.red .tag,.wk.red .d small{color:#C9D3E6}
+@media (max-width:1000px){.week{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.week{grid-template-columns:1fr}}
+
+/* results */
+.results{background:var(--navy);color:#fff}
+.results .tape{background:var(--tape)}
+.results .lede{color:#C9D3E6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);overflow:hidden;margin-top:38px}
+.stat{background:var(--navy);padding:26px 24px}
+.stat b{display:block;font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:800;font-size:clamp(34px,4vw,52px);letter-spacing:-.03em;line-height:1}
+.stat span{display:block;margin-top:8px;color:#C9D3E6;font-size:14.5px}
+.stat .mono{color:#8FA0BF;margin-top:10px;display:block}
+.results-note{margin-top:18px;font-size:14px;color:#8FA0BF}
+@media (max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* product */
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+.shot{background:var(--panel);border:1px solid var(--primer);border-radius:var(--r);overflow:hidden}
+.shot img{border-bottom:1px solid var(--primer)}
+.shot .cap{padding:18px 20px 20px}
+.shot .cap h3{margin-bottom:6px}
+.shot .cap p{font-size:15px;color:var(--ink-2)}
+.shot.wide{grid-column:1/-1;display:grid;grid-template-columns:1.4fr 1fr;align-items:center}
+.shot.wide img{border-bottom:0;border-right:1px solid var(--primer)}
+@media (max-width:860px){.shots{grid-template-columns:1fr}.shot.wide{grid-template-columns:1fr}.shot.wide img{border-right:0;border-bottom:1px solid var(--primer)}}
+
+/* beside CCC */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{background:var(--panel);border:1px solid var(--primer);border-radius:var(--r);padding:28px}
+.card h3{margin-bottom:12px}
+.card ul{margin:0;padding-left:0;list-style:none}
+.card li{padding:10px 0;border-top:1px solid var(--primer);font-size:15.5px;color:var(--ink-2)}
+.card li:first-child{border-top:0}
+.card li b{color:var(--ink);font-weight:600}
+@media (max-width:800px){.two{grid-template-columns:1fr}}
+
+/* setup */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:step}
+.step{background:var(--panel);border:1px solid var(--primer);border-radius:var(--r);padding:26px}
+.step .n{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.step h3{margin:10px 0 8px}
+.step p{font-size:15px;color:var(--ink-2)}
+@media (max-width:800px){.steps{grid-template-columns:1fr}}
+
+/* pricing */
+.price{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:stretch}
+.price-card{background:var(--panel);border:2px solid var(--ink);border-radius:20px;padding:34px}
+.price-card .amt{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:900;font-size:72px;letter-spacing:-.04em;line-height:1}
+.price-card .amt small{font-family:var(--body);font-weight:500;font-size:17px;letter-spacing:0;color:var(--ink-2);margin-left:6px}
+.price-card ul{list-style:none;padding:0;margin:22px 0 28px}
+.price-card li{padding:9px 0;border-top:1px solid var(--primer);font-size:15.5px}
+.price-card li:first-child{border-top:0}
+.price-aside{background:var(--panel);border:1px solid var(--primer);border-radius:20px;padding:34px;display:flex;flex-direction:column;justify-content:center}
+.price-aside p{color:var(--ink-2);font-size:15.5px}
+.price-aside p+p{margin-top:14px}
+@media (max-width:800px){.price{grid-template-columns:1fr}}
+
+/* faq */
+.faq{max-width:760px}
+.faq details{border-top:1px solid var(--primer);padding:18px 0}
+.faq details:last-child{border-bottom:1px solid var(--primer)}
+.faq summary{cursor:pointer;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--ink-3)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{margin-top:10px;color:var(--ink-2);font-size:15.5px;max-width:60ch}
+
+/* final cta */
+.go{background:var(--panel);border-top:1px solid var(--primer)}
+.go .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.form{display:grid;gap:12px}
+.form label{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.form input{width:100%;font:inherit;padding:14px 16px;border:1.5px solid var(--primer);border-radius:10px;background:#fff}
+.form input:focus{border-color:var(--ink);outline:0}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form .fine{font-size:13px;color:var(--ink-3)}
+.form .done{display:none;background:#E6F4EC;color:var(--green);padding:14px 16px;border-radius:10px;font-weight:600}
+.form.sent .done{display:block}
+.form.sent .fields{display:none}
+@media (max-width:800px){.go .wrap{grid-template-columns:1fr}.form .row{grid-template-columns:1fr}}
+
+footer{padding:34px 0 44px;font-size:14px;color:var(--ink-3)}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/mark.svg" alt=""><span>Repair<span>Reply</span></span></a>
+    <nav class="nav-links" aria-label="Page">
+      <a href="#week">How it works</a>
+      <a href="#results">Results</a>
+      <a href="#product">The app</a>
+      <a href="#pricing">Pricing</a>
+      <a class="btn btn-red" href="#start">Start free trial</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="tape">For body shops on CCC ONE</span>
+      <h1>The estimates you never hear back from <em>get a text.</em></h1>
+      <p class="lede">RepairReply reads the estimates you already write in CCC ONE, texts the customers who went quiet, and brings their replies to one inbox you can answer from your phone. From your shop's number, in your words.</p>
+      <div class="cta-row">
+        <a class="btn btn-red" href="#start">Start free trial <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
+        <a class="btn btn-line" href="#week">See a week of texts</a>
+      </div>
+      <p class="cta-note">30 days free. 30 minutes to set up. Nothing changes about how you write estimates.</p>
+      <div class="trust">
+        <div><b>44%</b>of texted customers replied</div>
+        <div><b>$17,650</b>closed after a text, one shop, five months</div>
+        <div><b>&lt;$7</b>total texting cost for those five months</div>
+      </div>
+    </div>
+
+    <div class="thread" id="thread" aria-label="Example conversation">
+      <div class="thread-head">
+        <div class="who">Daniel Ortiz <small>2019 Ford F-150 · estimate RO-2038</small></div>
+        <span class="line-pill">● your shop line</span>
+      </div>
+
+      <div class="day" data-step="1"><b>Tue</b> estimate written</div>
+      <div class="ev sys" data-step="1">CCC ONE estimate saved. Daniel is queued for a follow-up tomorrow at <span class="mono">10:12 AM</span>.</div>
+
+      <div class="day" data-step="2"><b>Wed</b> day 1</div>
+      <div class="ev out" data-step="2"><div><div class="bub">Hi Daniel, this is Northside Collision. Just following up on the estimate for your 2019 F-150. Have questions or ready to schedule? Call us at (555) 555-0100.</div><div class="meta">10:12 AM · <span class="auto">sent for you</span></div></div></div>
+      <div class="ev in" data-step="3"><div><div class="bub">Yes, can I bring it in Tuesday morning?</div><div class="meta">11:48 AM</div></div></div>
+      <div class="ev sys" data-step="4">Daniel replied, so the day-3 check-in is <b>paused</b>. Reply from the inbox or your phone.</div>
+      <div class="ev out" data-step="5"><div><div class="bub">Tuesday works great, Daniel. Drop it off any time after 8 and we'll have a loaner ready.</div><div class="meta">12:02 PM · you</div></div></div>
+      <div class="ev in" data-step="6"><div><div class="bub">Perfect, see you then 👍</div><div class="meta">12:09 PM</div></div></div>
+
+      <div class="day" data-step="7"><b>Wed</b> booked</div>
+      <div class="ev booked" data-step="7">Booked Tue 8:00 AM · on your Google Calendar · reminder set for Mon 8:00 AM</div>
+    </div>
+  </div>
+</section>
+
+<section id="week">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">What happens after an estimate</span>
+      <h2>A week of follow-up, done the way you'd do it if you had the time.</h2>
+      <p class="lede">Every text goes out between 10 and 12 or 2 and 4, never on a Sunday, never late at night. If the customer books, cancels or replies, the sequence stops on its own.</p>
+    </div>
+    <div class="week">
+      <div class="wk"><div class="d"><small>Day</small>0</div><h3>Estimate written</h3><p>You save the estimate in CCC ONE like always. RepairReply picks it up within five minutes.</p><div class="tag">no extra typing</div></div>
+      <div class="wk red"><div class="d"><small>Day</small>1</div><h3>24-hour follow-up</h3><p>A short text from your number: any questions, ready to schedule, here's who to call.</p><div class="tag">your template</div></div>
+      <div class="wk"><div class="d"><small>Day</small>3</div><h3>3-day check-in</h3><p>One more nudge. Skipped automatically if they already replied or booked.</p><div class="tag">pauses on reply</div></div>
+      <div class="wk"><div class="d"><small>Booked</small>−1</div><h3>Reminder</h3><p>When you book the job, the follow-ups stop and a reminder goes out the day before drop-off.</p><div class="tag">calendar synced</div></div>
+      <div class="wk"><div class="d"><small>Delivered</small>+1</div><h3>Review request</h3><p>The day after the car goes home, a thank-you with your Google review link.</p><div class="tag">its own on/off switch</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="results" class="results">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Results from the first shop</span>
+      <h2>Five months at an independent Bay Area shop.</h2>
+      <p class="lede">May to September 2026. One location, one estimator, texts sent only to customers with an open estimate.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>154</b><span>estimates written</span><span class="mono">95 texted</span></div>
+      <div class="stat"><b>44%</b><span>of texted customers replied</span><span class="mono">42 conversations</span></div>
+      <div class="stat"><b>$17,650</b><span>in repairs closed after a text</span><span class="mono">7 repairs, 3 more booked</span></div>
+      <div class="stat"><b>&lt;$7</b><span>total texting cost</span><span class="mono">Twilio, five months</span></div>
+    </div>
+    <p class="results-note">Counted from the shop's own CCC exports and message log. A repair counts only if the customer replied to or booked after a text.</p>
+  </div>
+</section>
+
+<section id="product">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">The app</span>
+      <h2>Everything on one screen, and that screen fits in your pocket.</h2>
+      <p class="lede">Open it on the shop PC or your phone. There is nothing to install for the people who use it.</p>
+    </div>
+    <div class="shots">
+      <div class="shot wide">
+        <img src="assets/queue.png" alt="The Queue: each customer with the exact text they will receive and when">
+        <div class="cap"><h3>Queue</h3><p>Every pending text, grouped by customer, with the exact words and the send time. Send it now, move it, or cancel it. Mark a job scheduled from the same card.</p></div>
+      </div>
+      <div class="shot">
+        <img src="assets/messages.png" alt="Messages: a threaded inbox with the customer and vehicle on hand">
+        <div class="cap"><h3>Messages</h3><p>Replies land in one inbox with the car and estimate attached. Answer from your phone. Book the appointment inside the thread.</p></div>
+      </div>
+      <div class="shot">
+        <img src="assets/insights.png" alt="Insights: funnel from estimate to text to reply to booking to closed repair">
+        <div class="cap"><h3>Insights</h3><p>Estimates, texted, replied, booked, closed, dollars. Plus the list that matters on a Monday: replied but not booked yet.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ccc">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Where it fits</span>
+      <h2>It sits next to CCC ONE. It doesn't replace anything.</h2>
+    </div>
+    <div class="two">
+      <div class="card">
+        <h3>What RepairReply does</h3>
+        <ul>
+          <li><b>Reads the estimates you already write.</b> From the EMS export CCC ONE can already produce, on the desktop or cccone.com.</li>
+          <li><b>Chases the ones that went quiet.</b> Timed texts to customers who have not booked, in your words.</li>
+          <li><b>Gives you an inbox you can answer.</b> On your phone, with the estimate attached.</li>
+          <li><b>Shows what it earned.</b> Hourly, from your own repair data.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What it leaves alone</h3>
+        <ul>
+          <li><b>Your estimating.</b> Same CCC ONE, same workflow, same screens.</li>
+          <li><b>Your DRP and insurer connections.</b> Nothing touches the files you share with insurers.</li>
+          <li><b>Repair status updates.</b> If you use CCC's status texting, keep it. RepairReply is about the estimates that never became repairs.</li>
+          <li><b>Your data.</b> It stays in your own database, on your own server or ours. Only Twilio and Google ever see a message, under your accounts.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Setup</span>
+      <h2>Thirty minutes, once.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">Step 1 · 10 min</div><h3>Point it at your export folder</h3><p>CCC ONE already saves EMS files. We show you the two checkboxes and where the folder lives.</p></div>
+      <div class="step"><div class="n">Step 2 · 15 min</div><h3>Get your texting number</h3><p>A local number registered to your shop's name, so texts arrive as you, not as a short code.</p></div>
+      <div class="step"><div class="n">Step 3 · 5 min</div><h3>Read the templates, change what you like</h3><p>Three texts, your wording. Leave auto-send off and tap Send on each batch until you trust it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Pricing</span>
+      <h2>One price per location. One closed repair pays for the year.</h2>
+    </div>
+    <div class="price">
+      <div class="price-card">
+        <div class="amt">$199<small>per month, per location</small></div>
+        <ul>
+          <li>Up to 1,000 texts a month included, more at cost</li>
+          <li>Two-way inbox, booking, Google Calendar sync, Insights</li>
+          <li>Your own local texting number, registered to your shop</li>
+          <li>Setup done with you, over the phone, in about 30 minutes</li>
+          <li>No contract. Cancel any time and keep your data.</li>
+        </ul>
+        <a class="btn btn-red" href="#start">Start 30 days free</a>
+      </div>
+      <div class="price-aside">
+        <p><b>Why 30 days free.</b> The first month's funnel shows you, in your own numbers, how many quiet estimates turned into conversations and how many of those turned into repairs. Decide after that, not before.</p>
+        <p><b>What it costs you otherwise.</b> At the first shop, the average repair closed after a text was about $2,500. Three of those a year covers it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tape">Questions shops ask</span>
+      <h2>Straight answers.</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Do I have to change how I write estimates?</summary><p>No. CCC ONE keeps working exactly as it does now. RepairReply reads the EMS file it already saves. If you are on cccone.com, the same export exists there.</p></details>
+      <details><summary>Will customers get texts for jobs I already approved or cancelled?</summary><p>No. The sequence stops when a job is booked, cancelled, or when the customer replies. A text that is more than two days overdue is dropped, never sent late.</p></details>
+      <details><summary>Whose number do the texts come from?</summary><p>Yours. We register a local number to your shop's name through Twilio. Replies to that number come to your inbox and, if you want, forward to your cell.</p></details>
+      <details><summary>Can I keep sending texts myself?</summary><p>Yes. Leave auto-send off and every text waits for you to tap Send. Many shops run it that way for the first few weeks, then switch it on.</p></details>
+      <details><summary>What about CCC Secure Share?</summary><p>EMS export works today on both CCC ONE desktop and cccone.com. A Secure Share connection is on the roadmap so shops can switch as CCC rolls it out, with no change to RepairReply on your side.</p></details>
+      <details><summary>Where does my customer data live?</summary><p>In a database that belongs to your shop. Nothing is pooled across shops, and nothing is sold. Only Twilio (to send texts) and Google (if you connect your calendar) ever see a message, through your own accounts.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="go">
+  <div class="wrap">
+    <div>
+      <span class="tape">Start free</span>
+      <h2>Tell us your shop. We'll text you back.</h2>
+      <p class="lede" style="margin-top:16px">Thirty minutes on the phone to set it up, then thirty days to see your own numbers. No card needed to start.</p>
+    </div>
+    <form class="form" id="form" novalidate>
+      <div class="fields">
+        <div class="row">
+          <div><label for="f-shop">Shop name</label><input id="f-shop" name="shop" autocomplete="organization" required></div>
+          <div><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
+        </div>
+        <div class="row">
+          <div><label for="f-phone">Cell number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
+          <div><label for="f-city">City</label><input id="f-city" name="city" autocomplete="address-level2"></div>
+        </div>
+        <button class="btn btn-red" type="submit">Text me to set it up</button>
+        <p class="fine">We text once to find a time. No list, no drip campaign.</p>
+      </div>
+      <div class="done">Got it. You'll hear from us by text, usually the same day.</div>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>RepairReply · built by a software engineer for a working body shop, in production since May 2026.</div>
+    <div>Not affiliated with CCC Intelligent Solutions. CCC ONE is their trademark.</div>
+  </div>
+</footer>
+
+<script>
+// Hero thread: the messages arrive in order, once, on load.
+(function(){
+  var t=document.getElementById('thread'); if(!t) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){t.classList.add('play');return;}
+  var steps=t.querySelectorAll('[data-step]'), i=0;
+  var delays={1:200,2:900,3:1500,4:700,5:1000,6:900,7:800};
+  function next(){
+    if(i>=steps.length){t.classList.add('play');return;}
+    var n=steps[i].getAttribute('data-step');
+    var batch=[]; while(i<steps.length&&steps[i].getAttribute('data-step')===n){batch.push(steps[i]);i++;}
+    setTimeout(function(){batch.forEach(function(el){el.style.opacity=1;el.style.transform='none';});next();},delays[n]||600);
+  }
+  next();
+})();
+// Lead form: static site for now; shows the confirmation and keeps the values in the URL hash for a later backend.
+document.getElementById('form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var f=e.target; if(!f.shop.value||!f.name.value||!f.phone.value){f.reportValidity();return;}
+  f.classList.add('sent');
+});
+</script>
+</body>
+</html>
