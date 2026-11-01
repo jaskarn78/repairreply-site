@@ -5,489 +5,573 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RepairReply · Follow up on every estimate, from your shop's number</title>
 <meta name="description" content="RepairReply reads your CCC ONE estimates, texts the customers who went quiet, and brings their replies to one inbox you can answer from your phone. $199 a month per location, first 30 days free.">
+<meta name="theme-color" content="#1A2D4D">
+<meta property="og:title" content="RepairReply · The estimates you never hear back from get a text.">
+<meta property="og:description" content="Reads your CCC ONE estimates, texts the customers who went quiet, brings the replies to one inbox. $199 a month per location, first 30 days free.">
+<meta property="og:image" content="media/promo-poster.jpg">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:'Switzer';font-weight:100 900;font-style:normal;font-display:swap;src:url(fonts/Switzer-Variable.woff2) format('woff2')}
 :root{
-  --paper:#FFFFFF;
-  --floor:#EEF0F3;
-  --primer:#D7DCE3;
-  --ink:#14213B;
-  --ink-2:#44536B;
-  --ink-3:#7A879B;
-  --navy:#1A2D4D;
-  --navy-2:#243D66;
-  --red:#C8202F;
-  --red-dark:#A81828;
-  --tape:#F2C14E;
-  --tape-ink:#5A4206;
-  --green:#1F7A52;
-  --green-soft:#E6F4EC;
-  --display:"Archivo",system-ui,sans-serif;
-  --body:"Instrument Sans",system-ui,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,monospace;
-  --max:1160px;
+  --ink:#15171A;--ink-2:#5C6168;--ink-3:#6B7178;
+  --bg:#FFFFFF;--band:#F3F5F9;--rule:#E4E5E8;--rule-2:#D5D7DB;
+  --accent:#C8202F;--accent-hover:#AD1B28;--navy:#1A2D4D;--navy-2:#223A5E;--navy-ink:#C9D3E4;--navy-rule:rgba(255,255,255,.14);--warm:#F7F1E6;--warm-rule:#E8DCC6;
+  --sans:'Switzer',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --max:1120px;--gx:clamp(20px,4vw,40px);
+  --ease:cubic-bezier(.2,.7,.2,1);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:4px}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+html{scroll-behavior:smooth;scroll-padding-top:80px;scrollbar-color:#C9CCD1 #fff;scrollbar-width:thin}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;font-feature-settings:"ss01","cv11"}
+::selection{background:#15171A;color:#fff}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:#fff}::-webkit-scrollbar-thumb{background:#C9CCD1;border-radius:5px;border:2px solid #fff}
+img,video{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+p,h1,h2,h3,ul,ol,dl,dd{margin:0;padding:0}
+ul,ol{list-style:none}
+p{text-wrap:pretty}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gx)}
 
-/* type: one family, two widths. Wide for what we say, condensed for what we label. */
-h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.025em;line-height:1.02;margin:0;font-variation-settings:"wdth" 108}
-h1{font-size:clamp(40px,5.2vw,64px)}
-h2{font-size:clamp(30px,3.8vw,46px)}
-h3{font-size:21px;font-variation-settings:"wdth" 100;font-weight:700;letter-spacing:-.01em;line-height:1.2}
-p{margin:0}
-.lede{font-size:clamp(18px,1.5vw,20px);color:var(--ink-2);max-width:34em}
-.mono{font-family:var(--mono);font-size:13px;letter-spacing:.02em}
-.label{display:block;font-family:var(--display);font-variation-settings:"wdth" 75;font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
-.tape{display:inline-block;font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tape-ink);background:var(--tape);padding:7px 14px 6px;transform:rotate(-1.2deg);position:relative;margin-bottom:18px}
-.tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:6px;background:linear-gradient(to right,rgba(255,255,255,.55),transparent)}
-.tape::before{left:0}.tape::after{right:0;transform:scaleX(-1)}
+/* Type scale */
+h1{font-size:clamp(36px,4.4vw,54px);font-weight:600;line-height:1.06;letter-spacing:-.028em;text-wrap:balance}
+h2{font-size:clamp(28px,3.4vw,42px);font-weight:600;line-height:1.1;letter-spacing:-.024em;text-wrap:balance;max-width:20em}
+h3{font-size:20px;font-weight:600;line-height:1.3;letter-spacing:-.012em}
+.lede{font-size:clamp(17px,1.4vw,20px);line-height:1.5;color:var(--ink-2);max-width:34em}
+.muted{color:var(--ink-2)}
+.small{font-size:14px;line-height:1.5}
+.num{font-variant-numeric:tabular-nums}
 
-.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-variation-settings:"wdth" 100;font-weight:700;font-size:17px;padding:16px 24px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-decoration:none;transition:transform .12s ease,background .12s ease}
-.btn:hover{transform:translateY(-1px)}
-.btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:var(--red-dark)}
-.btn-line{background:transparent;color:var(--ink);border-color:var(--ink)}
-.btn-line:hover{background:var(--floor)}
-.btn svg{width:18px;height:18px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:560;font-size:16px;letter-spacing:-.005em;cursor:pointer;transition:background .18s var(--ease),border-color .18s var(--ease),transform .18s var(--ease)}
+.btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--rule-2)}
+.btn.ghost:hover{background:var(--band);border-color:#C3C6CB}
+.btn svg{width:16px;height:16px}
 
-/* nav */
-.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--primer)}
-.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-variation-settings:"wdth" 105;font-weight:800;font-size:22px;letter-spacing:-.03em}
-.brand img{width:30px;height:30px}
-.brand span span{font-weight:600;color:var(--ink-2)}
-.nav-links{display:flex;gap:28px;align-items:center;font-weight:500;font-size:15.5px}
-.nav-links a{text-decoration:none;color:var(--ink-2)}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a.btn-red{color:#fff;padding:11px 18px;font-size:15px}
-@media (max-width:760px){.nav-links a:not(.btn){display:none}}
+/* Nav */
+.nav{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--rule)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:620;font-size:18px;letter-spacing:-.015em}
+.brand img{width:26px;height:26px}
+.links{display:flex;align-items:center;gap:28px;font-size:14px;color:var(--ink-2)}
+.links a:hover{color:var(--ink)}
+.nav .btn{height:38px;padding:0 14px;font-size:14px}
 
-/* hero */
-.hero{padding:72px 0 56px}
-.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start}
-.hero h1 em{font-style:normal;color:var(--red)}
-.hero .lede{margin:26px 0 34px}
-.cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.cta-note{font-size:14.5px;color:var(--ink-3);margin-top:14px}
-.trust{margin-top:44px;padding-top:22px;border-top:1px solid var(--primer);display:grid;grid-template-columns:repeat(3,1fr);gap:20px;color:var(--ink-2);font-size:14px}
-.trust b{display:block;font-family:var(--display);font-variation-settings:"wdth" 110;font-size:24px;color:var(--ink);letter-spacing:-.02em;line-height:1.1;margin-bottom:2px}
-@media (max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:40px}.hero{padding-top:44px}}
-@media (max-width:520px){.trust{grid-template-columns:1fr 1fr}}
+/* Hero */
+.hero{padding:clamp(40px,6vh,64px) 0 0;text-align:center}
+.hero h1{max-width:17em;margin:0 auto}
+.hero .lede{margin:18px auto 0;text-align:center}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+.hero-media{margin-top:clamp(32px,5vh,52px);padding:clamp(20px,3vw,40px) 0 0;background:radial-gradient(70% 90% at 50% 100%,rgba(26,45,77,.16),rgba(26,45,77,0) 70%),radial-gradient(45% 60% at 14% 100%,rgba(200,32,47,.10),rgba(200,32,47,0) 70%),linear-gradient(180deg,#fff 0,#EEF2F8 100%);border-bottom:1px solid var(--rule)}
+.hero-media .wrap{padding-bottom:0}
+.hero-phone{display:none}
 
-/* the signature: one customer's week, as the texts it produced */
-.thread{background:var(--paper);border:1px solid var(--primer);border-radius:20px;padding:22px 22px 18px;box-shadow:0 30px 70px -36px rgba(20,33,59,.45)}
-.thread-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--primer);margin-bottom:8px}
-.thread-head .who{font-weight:600}
-.thread-head .who small{display:block;font-family:var(--mono);font-size:12px;color:var(--ink-3);font-weight:400}
-.line-pill{font-family:var(--mono);font-size:11.5px;color:var(--green);background:var(--green-soft);padding:5px 10px;border-radius:999px;white-space:nowrap}
-.day{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:var(--ink-3);font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-.day::after{content:"";flex:1;height:1px;background:var(--primer)}
-.day b{color:var(--ink);font-weight:600}
-.ev{display:flex;gap:10px;align-items:flex-start;margin:8px 0;max-width:86%}
-.ev.sys{display:block;max-width:100%;background:var(--floor);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink-2)}
-.ev.out{margin-left:auto;flex-direction:row-reverse}
-.bub{padding:11px 14px;border-radius:16px;font-size:15px;line-height:1.4}
-.out .bub{background:var(--navy);color:#fff;border-bottom-right-radius:4px}
-.in .bub{background:#E6EAF2;color:var(--ink);border-bottom-left-radius:4px}
-.meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:5px}
-.out .meta{text-align:right}
-.meta .auto{color:#B7791F}
-.ev.booked{display:block;max-width:100%;background:var(--green-soft);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--green);font-weight:600}
-.thread [data-step]{opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s ease}
-.thread.play [data-step]{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.thread [data-step]{opacity:1;transform:none;transition:none}}
+/* Window frame for recordings */
+.win{border:1px solid var(--rule-2);border-radius:12px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(21,23,26,.04),0 24px 48px -24px rgba(21,23,26,.22)}
+.win .bar{display:flex;align-items:center;gap:10px;height:38px;padding:0 14px;border-bottom:1px solid var(--rule);background:#FBFBFC;font-size:12px;color:var(--ink-2)}
+.win .dots{display:flex;gap:6px}
+.win .dots i{width:10px;height:10px;border-radius:50%;background:#E1E3E7;display:block}
+.win .bar span{margin-left:auto}
+.win .bar span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#B9BDC3;margin-right:7px;vertical-align:1px}
+.win .shot{position:relative;background:#F6F7F9}
+.win video{width:100%;aspect-ratio:16/10}
+.hero-media .win{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:0;box-shadow:0 1px 2px rgba(21,23,26,.04),0 30px 60px -28px rgba(21,23,26,.3)}
+.play{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(21,23,26,.12);border:0;cursor:pointer}
+.play span{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;border-radius:8px;padding:10px 16px;font:560 14.5px var(--sans)}
+.play svg{width:14px;height:14px}
+.paused .play{display:flex}
+.cap{margin-top:12px;font-size:14px;color:var(--ink-2)}
 
-section{padding:88px 0}
-.sec-head{max-width:40em;margin-bottom:44px}
+/* Sections */
+section{padding:clamp(64px,9vw,120px) 0}
+.sec-head{max-width:40em;margin-bottom:clamp(32px,4.5vw,56px)}
 .sec-head .lede{margin-top:16px}
+.band{background:var(--band);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.warm{background:var(--warm);border-top:1px solid var(--warm-rule);border-bottom:1px solid var(--warm-rule)}
+.warm .steps{border-top-color:#D9CBB0}
 
-/* the week, drawn on a rule: ticks are days, and the days are the product */
-.rule{position:relative;border-top:2px solid var(--ink);margin-top:56px;display:grid;grid-template-columns:repeat(5,1fr);gap:28px}
-.tick{padding-top:26px;position:relative}
-.tick::before{content:"";position:absolute;top:-2px;left:0;width:2px;height:18px;background:var(--ink)}
-.tick.hot::before{background:var(--red);width:4px;left:-1px}
-.tick .d{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:900;font-size:40px;letter-spacing:-.03em;line-height:1}
-.tick.hot .d{color:var(--red)}
-.tick .d small{display:block;font-family:var(--display);font-variation-settings:"wdth" 75;font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
-.tick h3{font-size:17px;margin:14px 0 6px}
-.tick p{font-size:15px;color:var(--ink-2)}
-.tick .how{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--ink-3)}
-@media (max-width:1000px){.rule{grid-template-columns:repeat(2,1fr);border-top:0;margin-top:40px;gap:36px 28px}.tick{border-top:2px solid var(--ink)}}
-@media (max-width:520px){.rule{grid-template-columns:1fr}}
+/* The conversation */
+.convo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(36px,6vw,96px);align-items:center}
+.thread{border:1px solid var(--rule-2);border-radius:14px;background:#fff;padding:22px 22px 18px;box-shadow:0 1px 2px rgba(21,23,26,.04),0 20px 40px -28px rgba(21,23,26,.25)}
+.thread .who{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-2)}
+.thread .who b{display:block;color:var(--ink);font-weight:600;font-size:16px}
+.thread .av{width:34px;height:34px;border-radius:50%;background:var(--band);border:1px solid var(--rule);display:grid;place-items:center;font-weight:600;font-size:13px;color:var(--ink)}
+.thread ol{display:grid;gap:14px;padding-top:18px}
+.thread li{display:grid;gap:6px;max-width:84%;justify-self:end;text-align:right}
+.thread li.them{justify-self:start;text-align:left}
+.thread .t{font-size:12px;color:var(--ink-3);letter-spacing:.01em}
+.thread .b{display:inline-block;padding:11px 14px;border-radius:14px;border-bottom-right-radius:4px;background:var(--ink);color:#fff;font-size:16px;line-height:1.4;text-align:left}
+.thread li.them .b{background:var(--band);color:var(--ink);border-bottom-right-radius:14px;border-bottom-left-radius:4px}
+.thread li.sys{max-width:100%;text-align:center;justify-self:center}
+.thread li.sys .t{font-size:13px;color:var(--ink-2)}
+.thread li.sys .b{background:transparent;border:1px solid var(--rule-2);color:var(--ink);font-weight:560;font-size:14px;padding:8px 12px;border-radius:8px}
+.js .thread li{opacity:0;transform:translateY(8px)}
+.js .thread.go li{opacity:1;transform:none;transition:opacity .5s ease,transform .6s var(--ease);transition-delay:calc(var(--i)*.55s)}
+.convo .copy h2{margin-bottom:18px}
+.convo .copy p+p{margin-top:14px}
+.convo .copy p{color:var(--ink-2);max-width:32em}
+.convo .copy p strong{color:var(--ink);font-weight:600}
 
-/* results: a funnel you can read */
-.results{background:var(--navy);color:#fff}
-.results .lede{color:#C9D3E6}
-.funnel{margin-top:44px;display:grid;gap:14px}
-.row{display:grid;grid-template-columns:200px 1fr 120px;align-items:center;gap:20px}
-.row .k{font-size:15px;color:#C9D3E6}
-.row .k small{display:block;font-family:var(--mono);font-size:11.5px;color:#8FA0BF;margin-top:2px}
-.bar{height:46px;background:rgba(255,255,255,.08);border-radius:8px;overflow:hidden}
-.bar i{display:block;height:100%;background:#fff;border-radius:8px;width:var(--w);transition:width 1s cubic-bezier(.2,.8,.2,1)}
-.row.hot .bar i{background:var(--tape)}
-.row .n{font-family:var(--display);font-variation-settings:"wdth" 115;font-weight:800;font-size:38px;letter-spacing:-.03em;text-align:right;line-height:1}
-.money{margin-top:40px;padding-top:30px;border-top:1px solid rgba(255,255,255,.18);display:grid;grid-template-columns:1fr 1fr;gap:30px}
-.money b{display:block;font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:800;font-size:clamp(44px,5vw,64px);letter-spacing:-.035em;line-height:1}
-.money span{display:block;margin-top:8px;color:#C9D3E6;font-size:15.5px;max-width:28em}
-.results-note{margin-top:30px;font-size:14px;color:#8FA0BF;max-width:60em}
-@media (max-width:760px){.row{grid-template-columns:1fr;gap:6px}.row .n{text-align:left;font-size:30px}.bar{height:32px}.money{grid-template-columns:1fr}}
+/* Week */
+.week{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--rule-2)}
+.week li{padding:24px 24px 8px 0;border-right:1px solid var(--rule);margin-right:24px}
+.week li:last-child{border-right:0;margin-right:0}
+.week .d{display:block;font-size:14px;color:var(--ink-2)}
+.week .n{display:block;font-size:clamp(34px,3.4vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1;margin:6px 0 16px}
+.week h3{font-size:17px;margin-bottom:6px}
+.week p{font-size:16px;line-height:1.5;color:var(--ink-2)}
 
-/* the app: one annotated screen, then the phone */
-.app{background:var(--floor)}
-.annot{display:grid;grid-template-columns:1.55fr 1fr;gap:40px;align-items:center;margin-top:8px}
-.frame{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(20,33,59,.45);border:1px solid var(--primer);background:#fff}
-.pin{position:absolute;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-family:var(--display);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(255,255,255,.9);transform:translate(-50%,-50%)}
-.notes{list-style:none;margin:0;padding:0}
-.notes li{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--primer);font-size:15.5px;color:var(--ink-2)}
-.notes li:first-child{border-top:0;padding-top:0}
-.notes li b{color:var(--ink);display:block;font-weight:600;margin-bottom:2px}
-.notes .pin{position:static;transform:none;width:28px;height:28px;box-shadow:none}
-.pair{display:grid;grid-template-columns:300px 1fr;gap:40px;align-items:center;margin-top:72px}
-.phone{border-radius:34px;padding:10px;background:#0f1726;box-shadow:0 30px 60px -30px rgba(20,33,59,.6);justify-self:center}
-.phone div{border-radius:26px;overflow:hidden}
-.pair .cap h3{margin-bottom:8px}
-.pair .cap p{color:var(--ink-2);font-size:15.5px;max-width:34em}
-.pair .cap p+p{margin-top:10px}
-.pair .cap .frame{margin-top:24px}
-@media (max-width:900px){.annot{grid-template-columns:1fr}.pair{grid-template-columns:1fr}.phone{max-width:300px}}
+/* App features */
+.feat{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,5vw,80px);align-items:start;padding:clamp(40px,6vw,72px) 0;border-top:1px solid var(--rule)}
+.feat:first-of-type{border-top:0;padding-top:0}
+.feat.flip .media{order:-1}
+.feat>div:first-child{padding-top:clamp(0px,3vw,48px)}
+.feat.flip>div:last-child{padding-top:clamp(0px,3vw,48px)}
+.feat h3{font-size:clamp(22px,2vw,26px);margin-bottom:12px}
+.feat p{color:var(--ink-2);max-width:30em}
+.feat p+p{margin-top:12px}
+.feat .cap{margin-top:14px}
+.phone{width:min(340px,100%);margin:0 auto;padding:8px;border-radius:40px;background:#15171A;box-shadow:0 1px 2px rgba(21,23,26,.1),0 30px 60px -30px rgba(21,23,26,.45)}
+.phone .shot{position:relative;border-radius:33px;overflow:hidden;background:#F6F7F9}
+.phone video{width:100%;aspect-ratio:390/844}
 
-/* beside CCC: two columns of text, no boxes */
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:48px}
-.cols h3{padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:6px}
-.cols ul{margin:0;padding:0;list-style:none}
-.cols li{padding:14px 0;border-bottom:1px solid var(--primer);font-size:15.5px;color:var(--ink-2)}
-.cols li b{color:var(--ink);font-weight:600}
-@media (max-width:760px){.cols{grid-template-columns:1fr}}
+/* Dark fields */
+.dark{background:var(--navy);color:#fff;border-color:var(--navy-2)}
+.dark+.dark{border-top:1px solid var(--navy-rule)}
+.dark h2,.dark h3{color:#fff}
+.dark .lede,.dark .muted,.dark .cap,.dark .fit li span,.dark .fit-note{color:var(--navy-ink)}
+.dark .fit h3{border-bottom-color:rgba(255,255,255,.28)}
+.dark .fit li{border-bottom-color:var(--navy-rule)}
+.dark .fit-note svg{color:var(--navy-ink)}
+.dark .win{border-color:rgba(255,255,255,.16);box-shadow:0 2px 4px rgba(0,0,0,.2),0 40px 80px -30px rgba(0,0,0,.6)}
+.dark .win .bar{background:var(--navy-2);border-bottom-color:var(--navy-rule);color:var(--navy-ink)}
+.dark .win .dots i{background:rgba(255,255,255,.22)}
+.dark .win .bar span::before{background:#5C7AA8}
+.dark .bigplay{background:var(--accent);box-shadow:0 10px 30px -8px rgba(0,0,0,.5)}
+.dark .bigplay:hover{background:var(--accent-hover)}
+.dark :focus-visible{outline-color:#fff}
 
-/* setup: the same rule as the week, three ticks */
-.rule.three{grid-template-columns:repeat(3,1fr)}
-.tick .t{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-@media (max-width:760px){.rule.three{grid-template-columns:1fr}}
+/* Promo */
+.promo-wrap{max-width:960px;margin:0 auto}
+.promo-wrap .win{position:relative}
+.promo-wrap .win video{aspect-ratio:16/9;background:#fff}
+.bigplay{position:absolute;left:50%;top:calc(50% + 19px);width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -10px rgba(21,23,26,.5);transition:transform .18s var(--ease),background .18s}
+.bigplay:hover{transform:scale(1.04);background:#2A2D32}
+.bigplay svg{width:30px;height:30px;margin-left:3px}
+.promo-wrap .win.playing .bigplay{display:none}
 
-/* pricing: a statement, not a card */
-.price{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:start}
-.amt{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:900;font-size:clamp(72px,10vw,120px);letter-spacing:-.045em;line-height:.95}
-.amt small{display:block;font-family:var(--body);font-weight:500;font-size:19px;letter-spacing:0;color:var(--ink-2);margin-top:12px}
-.incl{list-style:none;padding:0;margin:30px 0 32px;border-top:2px solid var(--ink)}
-.incl li{padding:12px 0;border-bottom:1px solid var(--primer);font-size:15.5px;display:grid;grid-template-columns:150px 1fr;gap:16px}
-.incl li span{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);padding-top:3px;letter-spacing:.04em;text-transform:uppercase}
-.price-aside{padding-top:20px}
-.price-aside p{color:var(--ink-2);font-size:15.5px}
-.price-aside p+p{margin-top:16px}
-.price-aside b{color:var(--ink)}
-@media (max-width:800px){.price{grid-template-columns:1fr}.incl li{grid-template-columns:1fr;gap:2px}}
+/* Beside CCC ONE */
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,72px)}
+.fit h3{padding-bottom:14px;border-bottom:1px solid var(--rule-2);font-size:18px}
+.fit li{display:grid;gap:4px;padding:16px 0;border-bottom:1px solid var(--rule);font-size:16px;line-height:1.5}
+.fit li b{font-weight:600}
+.fit li span{color:var(--ink-2)}
+.fit-note{margin-top:24px;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:10px}
+.fit-note svg{width:18px;height:18px;flex:none;color:var(--ink-3)}
 
-/* faq */
-.faq{max-width:760px}
-.faq details{border-top:1px solid var(--primer);padding:18px 0}
-.faq details:last-child{border-bottom:1px solid var(--primer)}
-.faq summary{cursor:pointer;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:20px}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";font-family:var(--mono);color:var(--ink-3)}
-.faq details[open] summary::after{content:"–"}
-.faq details p{margin-top:10px;color:var(--ink-2);font-size:15.5px;max-width:60ch}
+/* Setup */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,56px);border-top:1px solid var(--rule-2)}
+.steps li{padding-top:22px}
+.steps .n{display:block;font-size:14px;color:var(--ink-2);margin-bottom:12px}
+.steps h3{font-size:18px;margin-bottom:8px}
+.steps p{font-size:16px;line-height:1.5;color:var(--ink-2)}
 
-/* start */
-.go{background:var(--floor);border-top:1px solid var(--primer)}
-.go .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.form{display:grid;gap:12px}
-.form label{font-size:13.5px;font-weight:600;color:var(--ink-2)}
-.form input{width:100%;font:inherit;padding:14px 16px;border:1.5px solid var(--primer);border-radius:10px;background:#fff}
-.form input:focus{border-color:var(--ink);outline:0}
-.form .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form .fine{font-size:13px;color:var(--ink-3)}
-.form .done{display:none;background:var(--green-soft);color:var(--green);padding:14px 16px;border-radius:10px;font-weight:600}
-.form.sent .done{display:block}
-.form.sent .fields{display:none}
-@media (max-width:800px){.go .wrap{grid-template-columns:1fr}.form .row2{grid-template-columns:1fr}}
+/* Pricing */
+.price{max-width:880px;margin:0 auto;border:1px solid var(--rule-2);border-radius:14px;background:#fff;display:grid;grid-template-columns:1.05fr 1fr;box-shadow:0 1px 2px rgba(21,23,26,.04),0 20px 40px -28px rgba(21,23,26,.2)}
+.price>div{padding:clamp(28px,3.5vw,44px)}
+.price>div:first-child{display:flex;flex-direction:column}
+.price>div:first-child .btn{margin-top:auto;align-self:flex-start;padding-top:0}
+.price>div:first-child .lede{margin-bottom:26px}
+.price>div+div{border-left:1px solid var(--rule);background:#F3F5F9;border-radius:0 14px 14px 0}
+.amt{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+.amt b{font-size:clamp(52px,5.5vw,72px);font-weight:600;letter-spacing:-.04em;line-height:1}
+.amt span{color:var(--ink-2);font-size:16px}
+.price .lede{font-size:16.5px;margin-top:18px;max-width:26em}
+.price .btn{margin-top:26px}
+.price dl{display:grid;gap:0}
+.price dl div{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.price dl div:last-child{border-bottom:0}
+.price dt{color:var(--ink-2)}
+.price h3{font-size:15px;color:var(--ink-2);font-weight:560;margin-bottom:8px}
 
-footer{padding:34px 0 44px;font-size:14px;color:var(--ink-3);border-top:1px solid var(--primer)}
-footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+/* FAQ */
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(28px,5vw,72px);border-top:1px solid var(--rule-2)}
+.qa div{padding:22px 0;border-bottom:1px solid var(--rule)}
+.qa dt{font-weight:600;font-size:18px;letter-spacing:-.01em;line-height:1.35}
+.qa dd{margin-top:8px;font-size:16px;line-height:1.55;color:var(--ink-2);max-width:52ch}
+
+/* Video lightbox */
+.lb{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh;margin:0;display:none;align-items:center;justify-content:center}
+.lb[open]{display:flex}
+.lb::backdrop{background:rgba(21,23,26,.82)}
+.lb-in{position:relative;width:min(1120px,calc(100vw - 32px))}
+.lb-in video{width:100%;max-height:calc(100vh - 120px);background:#000;border-radius:12px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8)}
+.lb-in video.tall{width:auto;max-width:100%;aspect-ratio:9/16;margin:0 auto;display:block}
+.lb-close{position:absolute;right:0;top:-48px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer}
+.lb-close:hover{background:rgba(255,255,255,.26)}
+.lb-close svg{width:18px;height:18px}
+.lb-cap{margin-top:10px;font-size:14px;color:#C9D3E4;text-align:center}
+.lb :focus-visible{outline-color:#fff}
+
+/* Start, on the brand red */
+.red{background:var(--accent);color:#fff}
+.red h2{color:#fff}
+.red .lede{color:#FBE3E5}
+.red .form{border-color:rgba(255,255,255,.4);box-shadow:0 2px 4px rgba(0,0,0,.12),0 30px 60px -28px rgba(80,0,8,.55)}
+.red .form .btn{background:var(--ink);border-color:var(--ink)}
+.red .form .btn:hover{background:#2A2D32;border-color:#2A2D32}
+.red .form label{color:var(--ink)}
+.red :focus-visible{outline-color:#fff}
+.red .form :focus-visible{outline-color:var(--ink)}
+
+/* Start */
+.start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(36px,6vw,96px);align-items:start}
+.start .lede{margin-top:16px}
+.form{display:grid;gap:14px;border:1px solid var(--rule-2);border-radius:14px;padding:clamp(20px,3vw,28px);background:#fff;box-shadow:0 1px 2px rgba(21,23,26,.04),0 20px 40px -28px rgba(21,23,26,.2)}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form label{display:block;font-size:14px;font-weight:560;margin-bottom:6px;color:var(--ink)}
+.form input{width:100%;height:44px;font:inherit;font-size:16px;color:var(--ink);padding:0 12px;border:1px solid var(--rule-2);border-radius:8px;background:#fff;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
+.form input::placeholder{color:var(--ink-3)}
+.form input:hover{border-color:#C3C6CB}
+.form input:focus-visible{outline:0;border-color:var(--ink);box-shadow:0 0 0 3px rgba(21,23,26,.1)}
+.form input[aria-invalid=true]{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,32,47,.12)}
+.form .btn{width:100%;margin-top:4px}
+.fine{font-size:14px;color:var(--ink-2)}
+.msg{font-size:14px;font-weight:560;min-height:1.4em}
+.msg.err{color:var(--accent)}
+footer{border-top:0;padding:28px 0 40px;font-size:14px;color:var(--ink-2)}
+footer .wrap{display:grid;gap:10px}
+footer .legal{padding-top:10px;border-top:1px solid var(--rule)}
+
+@media (max-width:900px){
+  .convo,.feat,.fit,.start,.price{grid-template-columns:1fr}
+  .feat.flip .media{order:0}
+  .price>div+div{border-left:0;border-top:1px solid var(--rule);border-radius:0 0 14px 14px}
+  .week{grid-template-columns:1fr 1fr;border-top:0}
+  .week li{border-right:0;margin-right:0;border-top:1px solid var(--rule-2);padding-right:0}
+  .steps{grid-template-columns:1fr}
+  .qa{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .links{display:none}
+  .week{grid-template-columns:1fr}
+  .form .two{grid-template-columns:1fr}
+  .actions .btn{width:100%}
+  .hero-media .win{display:none}
+  .hero-phone{display:block;width:min(320px,100%);margin:0 auto;padding-top:8px}
+  .hero-phone .phone{margin-bottom:0}
+  .hero-phone .cap{text-align:center;margin:14px 0 18px}
+  .thread li{max-width:92%}
+  .win .bar span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .thread li{opacity:1;transform:none;transition:none}
+  .btn{transition:none}
+}
 </style>
 </head>
 <body>
-
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="assets/mark.svg" alt=""><span>Repair<span>Reply</span></span></a>
-    <nav class="nav-links" aria-label="Page">
-      <a href="#week">How it works</a>
-      <a href="#results">Results</a>
-      <a href="#app">The app</a>
-      <a href="#pricing">Pricing</a>
-      <a class="btn btn-red" href="#start">Start free trial</a>
-    </nav>
+    <a class="brand" href="#top"><img src="assets/mark.svg" alt="" width="26" height="26">RepairReply</a>
+    <nav class="links" aria-label="Page"><a href="#how">How it works</a><a href="#app">The app</a><a href="#ccc">Beside CCC ONE</a><a href="#pricing">Pricing</a><a href="#faq">Questions</a></nav>
+    <a class="btn" href="#start">Start 30 days free</a>
   </div>
 </header>
-
 <main id="top">
 
-<section class="hero">
+<div class="hero">
   <div class="wrap">
-    <div>
-      <span class="tape">For body shops on CCC ONE</span>
-      <h1>The estimates you never hear back from <em>get a text.</em></h1>
-      <p class="lede">RepairReply reads the estimates you already write in CCC ONE, texts the customers who went quiet, and brings their replies to one inbox you can answer from your phone. From your shop's number, in your words.</p>
-      <div class="cta-row">
-        <a class="btn btn-red" href="#start">Start free trial <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 5l5 5-5 5"/></svg></a>
-        <a class="btn btn-line" href="#week">See a week of texts</a>
-      </div>
-      <p class="cta-note">30 days free. 30 minutes to set up. Nothing changes about how you write estimates.</p>
-      <div class="trust">
-        <div><b>44%</b>of texted customers replied</div>
-        <div><b>$17,650</b>closed after a text, one shop, five months</div>
-        <div><b>&lt;$7</b>total texting cost for those five months</div>
+    <h1 id="h1">Don't let estimates go cold.</h1>
+    <p class="lede">RepairReply texts your quiet customers from your shop's number and puts every reply in one inbox.</p>
+    <div class="actions">
+      <a class="btn" href="#start">Start 30 days free</a>
+      <button class="btn ghost" type="button" id="watch"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Watch the 35-second video</button>
+    </div>
+  </div>
+  <div class="hero-media">
+    <div class="wrap">
+      <div class="hero-phone"><div class="phone loop"><div class="shot">
+          <video muted playsinline loop preload="none" poster="media/inbox-reply.jpg" data-src="media/inbox-reply.mp4" width="780" height="1688" aria-label="The inbox on a phone: a customer's reply is opened and answered"></video>
+          <button class="play" type="button" aria-label="Play the inbox recording"><span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2l11 6-11 6z"/></svg>Play</span></button>
+        </div></div><p class="cap">The inbox on your phone. Demo data, Northside Collision.</p></div>
+      <div class="win loop">
+        <div class="bar"><div class="dots"><i></i><i></i><i></i></div>Queue<span>Demo data · Northside Collision</span></div>
+        <div class="shot">
+          <video muted playsinline loop preload="none" poster="media/queue-send.jpg" data-src="media/queue-send.mp4" width="1600" height="1000" aria-label="The Queue: a 24-hour follow-up is sent, the job is marked scheduled, and it appears on the calendar"></video>
+          <button class="play" type="button" aria-label="Play the Queue recording"><span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2l11 6-11 6z"/></svg>Play</span></button>
+        </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="thread" id="thread" aria-label="Example conversation">
-      <div class="thread-head">
-        <div class="who">Daniel Ortiz <small>2019 Ford F-150 · estimate RO-2038</small></div>
-        <span class="line-pill">● your shop line</span>
-      </div>
-      <div class="day" data-step="1"><b>Tue</b> estimate written</div>
-      <div class="ev sys" data-step="1">CCC ONE estimate saved. Daniel is queued for a follow-up tomorrow at <span class="mono">10:12 AM</span>.</div>
-      <div class="day" data-step="2"><b>Wed</b> day 1</div>
-      <div class="ev out" data-step="2"><div><div class="bub">Hi Daniel, this is Northside Collision. Just following up on the estimate for your 2019 F-150. Have questions or ready to schedule? Call us at (555) 555-0100.</div><div class="meta">10:12 AM · <span class="auto">sent for you</span></div></div></div>
-      <div class="ev in" data-step="3"><div><div class="bub">Yes, can I bring it in Tuesday morning?</div><div class="meta">11:48 AM</div></div></div>
-      <div class="ev sys" data-step="4">Daniel replied, so the day-3 check-in is <b>paused</b>. Reply from the inbox or your phone.</div>
-      <div class="ev out" data-step="5"><div><div class="bub">Tuesday works great, Daniel. Drop it off any time after 8 and we'll have a loaner ready.</div><div class="meta">12:02 PM · you</div></div></div>
-      <div class="ev in" data-step="6"><div><div class="bub">Perfect, see you then 👍</div><div class="meta">12:09 PM</div></div></div>
-      <div class="day" data-step="7"><b>Wed</b> booked</div>
-      <div class="ev booked" data-step="7">Booked Tue 8:00 AM · on your Google Calendar · reminder set for Mon 8:00 AM</div>
+<section id="thread">
+  <div class="wrap convo">
+    <div class="thread" id="convo" aria-label="Example conversation">
+      <div class="who"><div class="av" aria-hidden="true">DO</div><div><b>Daniel Ortiz</b>2019 Ford F-150 · estimate written Thursday</div></div>
+      <ol>
+        <li style="--i:1"><span class="t">Friday, 10:12 AM · sent for you</span><span class="b">Hi Daniel, this is Northside Collision. Just following up on the estimate for your 2019 F-150. Have questions or ready to schedule? Call us at (555) 555-0100.</span></li>
+        <li class="them" style="--i:2"><span class="t">11:48 AM · Daniel</span><span class="b">Yes, can I bring it in Tuesday morning?</span></li>
+        <li style="--i:3"><span class="t">12:02 PM · you, from your phone</span><span class="b">Tuesday works great, Daniel. Drop it off any time after 8 AM and we'll have a loaner ready.</span></li>
+        <li class="them" style="--i:4"><span class="b">Perfect, see you then.</span></li>
+        <li class="sys" style="--i:5"><span class="b">Booked · Tuesday 8:00 AM · on your Google Calendar</span></li>
+      </ol>
+    </div>
+    <div class="copy">
+      <h2>One estimate, from written to booked.</h2>
+      <p><strong>Thursday.</strong> You save the estimate in CCC ONE like always. RepairReply picks it up within five minutes and queues a text for tomorrow.</p>
+      <p><strong>Friday.</strong> The text goes out from your shop's number, in your words. Daniel replies, and his reply lands in your inbox with the estimate attached.</p>
+      <p><strong>Noon.</strong> You answer from your phone, mark the job scheduled, and the follow-ups stop. A reminder goes out the day before drop-off.</p>
+      <p class="small">Example conversation. Northside Collision and Daniel are made up.</p>
     </div>
   </div>
 </section>
 
-<section id="week">
+<section id="how" class="band">
   <div class="wrap">
     <div class="sec-head">
-      <span class="label">What happens after an estimate</span>
       <h2>A week of follow-up, done the way you'd do it if you had the time.</h2>
-      <p class="lede">Every text goes out between 10 and 12 or 2 and 4, never on a Sunday, never late at night. If the customer books, cancels or replies, the sequence stops on its own.</p>
+      <p class="lede">Texts go out between 10 and 12 or 2 and 4, never on a Sunday. If the customer books, cancels or replies, the sequence stops on its own.</p>
     </div>
-    <div class="rule">
-      <div class="tick"><div class="d"><small>Day</small>0</div><h3>Estimate written</h3><p>You save the estimate in CCC ONE like always. RepairReply picks it up within five minutes.</p><div class="how">no extra typing</div></div>
-      <div class="tick hot"><div class="d"><small>Day</small>1</div><h3>24-hour follow-up</h3><p>A short text from your number: any questions, ready to schedule, here's who to call.</p><div class="how">your template</div></div>
-      <div class="tick hot"><div class="d"><small>Day</small>3</div><h3>3-day check-in</h3><p>One more nudge. Skipped on its own if they already replied or booked.</p><div class="how">pauses on reply</div></div>
-      <div class="tick"><div class="d"><small>Drop-off</small>−1</div><h3>Reminder</h3><p>When you book the job the follow-ups stop, and a reminder goes out the day before drop-off.</p><div class="how">calendar synced</div></div>
-      <div class="tick"><div class="d"><small>Delivered</small>+1</div><h3>Review request</h3><p>The day after the car goes home, a thank-you with your Google review link.</p><div class="how">its own on/off switch</div></div>
-    </div>
+    <ol class="week">
+      <li><span class="d">Day</span><span class="n">0</span><h3>Estimate written</h3><p>Save it in CCC ONE like always. RepairReply picks it up within five minutes.</p></li>
+      <li><span class="d">Day</span><span class="n">1</span><h3>24-hour follow-up</h3><p>A short text from your number: any questions, ready to schedule, who to call.</p></li>
+      <li><span class="d">Day</span><span class="n">3</span><h3>3-day check-in</h3><p>One more nudge. Skipped if they already replied or booked.</p></li>
+      <li><span class="d">Day before drop-off</span><span class="n">&minus;1</span><h3>Reminder</h3><p>Book the job and the follow-ups stop. A reminder goes out the day before.</p></li>
+      <li><span class="d">Day after delivery</span><span class="n">+1</span><h3>Review request</h3><p>A thank-you with your Google review link. It has its own on/off switch.</p></li>
+    </ol>
   </div>
 </section>
 
-<section id="results" class="results">
+<section id="app">
   <div class="wrap">
     <div class="sec-head">
-      <span class="tape">Results from the first shop</span>
-      <h2>Five months at an independent Bay Area shop.</h2>
-      <p class="lede">May to September 2026. One location, one estimator, texts sent only to customers with an open estimate.</p>
+      <h2>See every text before it goes out, word for word.</h2>
+      <p class="lede">The app, recorded with made-up customers. Nothing here is a mockup.</p>
     </div>
-    <div class="funnel" id="funnel">
-      <div class="row"><div class="k">Estimates written</div><div class="bar"><i style="--w:100%"></i></div><div class="n">154</div></div>
-      <div class="row"><div class="k">Texted <small>the rest booked or cancelled first</small></div><div class="bar"><i style="--w:62%"></i></div><div class="n">95</div></div>
-      <div class="row"><div class="k">Replied <small>44% of those texted</small></div><div class="bar"><i style="--w:27%"></i></div><div class="n">42</div></div>
-      <div class="row hot"><div class="k">Came back <small>7 repairs closed, 3 booked</small></div><div class="bar"><i style="--w:6.5%"></i></div><div class="n">10</div></div>
-    </div>
-    <div class="money">
-      <div><b>$17,650</b><span>in repairs closed after a text. Average ticket about $2,500.</span></div>
-      <div><b>&lt;$7</b><span>spent on texting for the whole five months.</span></div>
-    </div>
-    <p class="results-note">Counted from the shop's own CCC exports and message log. A repair counts only if the customer replied to or booked after a text.</p>
-  </div>
-</section>
-
-<section id="app" class="app">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="label">The app</span>
-      <h2>Every text, before it goes out, with the exact words.</h2>
-      <p class="lede">Open it on the shop PC or your phone. Nothing to install for the people who use it.</p>
-    </div>
-    <div class="annot">
-      <div class="frame">
-        <img src="assets/queue.png" alt="The Queue: each customer with the text they will receive and when">
-        <span class="pin" style="left:17%;top:35%">1</span>
-        <span class="pin" style="left:36%;top:44%">2</span>
-        <span class="pin" style="left:44%;top:56%">3</span>
-        <span class="pin" style="left:17%;top:64%">4</span>
-      </div>
-      <ul class="notes">
-        <li><span class="pin">1</span><div><b>Mark scheduled</b>Booked the job on the phone? One tap stops the follow-ups and sets the reminder.</div></li>
-        <li><span class="pin">2</span><div><b>When it sends</b>The exact time, inside your send window. Move it or hold it.</div></li>
-        <li><span class="pin">3</span><div><b>What the customer will read</b>Name, year, model and your phone already filled in. Change the wording any time.</div></li>
-        <li><span class="pin">4</span><div><b>Send now, or cancel</b>Auto-send can stay off. Many shops tap Send themselves for the first few weeks.</div></li>
-      </ul>
-    </div>
-    <div class="pair">
-      <div class="phone"><div><img src="assets/messages-thread-mobile.png" alt="A customer conversation on a phone"></div></div>
-      <div class="cap">
+    <div class="feat">
+      <div>
         <h3>Replies come to you, not to a dashboard you forget to check.</h3>
-        <p>Every reply lands in one inbox with the car and the estimate attached. Answer from your phone in the shop's name. Book the appointment from inside the thread.</p>
-        <p>Insights keeps score: estimates, texted, replied, booked, closed, dollars. And the list that matters on a Monday morning: replied, but not booked yet.</p>
-        <div class="frame"><img src="assets/insights.png" alt="Insights: the funnel from estimate to closed repair, and who to call back"></div>
+        <p>Every reply lands in one inbox with the car and the estimate attached. Answer from your phone in the shop's name, and book the appointment from inside the thread.</p>
+        <p>Leave auto-send off and every text waits for you to tap Send. Turn it on and texts go out inside your window.</p>
+      </div>
+      <div class="media">
+        <div class="phone loop"><div class="shot">
+          <video muted playsinline loop preload="none" poster="media/inbox-reply.jpg" data-src="media/inbox-reply.mp4" width="780" height="1688" aria-label="The inbox on a phone: a customer's reply is opened and answered"></video>
+          <button class="play" type="button" aria-label="Play the inbox recording"><span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2l11 6-11 6z"/></svg>Play</span></button>
+        </div></div>
+      </div>
+    </div>
+    <div class="feat flip">
+      <div>
+        <h3>Insights keeps score, down to who still needs a call.</h3>
+        <p>Estimates written, texted, replied, booked, closed. Updated hourly from your own CCC exports, with the list that matters on a Monday morning at the top: replied, but not booked yet.</p>
+        <p class="cap">Figures shown are the demo's, not a real shop's.</p>
+      </div>
+      <div class="media">
+        <div class="win loop">
+          <div class="bar"><div class="dots"><i></i><i></i><i></i></div>Insights<span>Demo data · Northside Collision</span></div>
+          <div class="shot">
+            <video muted playsinline loop preload="none" poster="media/insights.jpg" data-src="media/insights.mp4" width="1600" height="1000" aria-label="Insights: the replied-not-booked list, this week's bookings, and the follow-up funnel"></video>
+            <button class="play" type="button" aria-label="Play the Insights recording"><span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 2l11 6-11 6z"/></svg>Play</span></button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="ccc">
+<section id="tour" class="dark">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;margin-left:auto;margin-right:auto">
+      <h2 style="margin:0 auto">The whole loop in 35 seconds.</h2>
+      <p class="lede" style="margin-left:auto;margin-right:auto;text-align:center">The text goes out, the reply comes in, the job gets a date. Captioned, with music.</p>
+    </div>
+    <div class="promo-wrap">
+      <div class="win">
+        <div class="bar"><div class="dots"><i></i><i></i><i></i></div>RepairReply in 35 seconds</div>
+        <video id="promo" playsinline preload="none" poster="media/promo-poster.jpg" aria-label="RepairReply in 35 seconds">
+          <source src="media/promo-16x9.mp4" type="video/mp4">
+          <track kind="captions" src="media/promo.vtt" srclang="en" label="English" default>
+        </video>
+        <button class="bigplay" id="bigplay" type="button" aria-label="Play the 35-second tour"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>
+      </div>
+      <p class="cap" style="text-align:center">Northside Collision is not a real shop.</p>
+    </div>
+  </div>
+</section>
+
+<section id="ccc" class="dark">
   <div class="wrap">
     <div class="sec-head">
-      <span class="label">Where it fits</span>
       <h2>It sits next to CCC ONE. It doesn't replace anything.</h2>
+      <p class="lede">RepairReply reads the EMS file CCC ONE already saves. Nothing is written back, and nothing about how you write estimates changes.</p>
     </div>
-    <div class="cols">
-      <div>
-        <h3>What RepairReply does</h3>
-        <ul>
-          <li><b>Reads the estimates you already write.</b> From the EMS export CCC ONE can already produce, on the desktop or cccone.com.</li>
-          <li><b>Chases the ones that went quiet.</b> Timed texts to customers who have not booked, in your words.</li>
-          <li><b>Gives you an inbox you can answer.</b> On your phone, with the estimate attached.</li>
-          <li><b>Shows what it earned.</b> Hourly, from your own repair data.</li>
-        </ul>
-      </div>
-      <div>
-        <h3>What it leaves alone</h3>
-        <ul>
-          <li><b>Your estimating.</b> Same CCC ONE, same workflow, same screens.</li>
-          <li><b>Your DRP and insurer connections.</b> Nothing touches the files you share with insurers.</li>
-          <li><b>Repair status updates.</b> If you use CCC's status texting, keep it. RepairReply is about the estimates that never became repairs.</li>
-          <li><b>Your data.</b> It stays in your own database. Only Twilio and Google ever see a message, under your accounts.</li>
-        </ul>
-      </div>
+    <div class="fit">
+      <div><h3>CCC ONE keeps</h3><ul>
+        <li><b>Your estimating.</b><span>Same workflow, same screens.</span></li>
+        <li><b>Your DRP and insurer connections.</b><span>RepairReply only reads an export.</span></li>
+        <li><b>Repair status updates.</b><span>If you use CCC's status texting, keep it.</span></li>
+      </ul></div>
+      <div><h3>RepairReply adds</h3><ul>
+        <li><b>Follow-up on the estimates that went quiet.</b><span>Timed texts in your words, from your number.</span></li>
+        <li><b>An inbox you can answer.</b><span>On your phone, with the estimate attached.</span></li>
+        <li><b>A plain funnel of what it earned.</b><span>Updated hourly from your own repair data.</span></li>
+      </ul></div>
     </div>
+    <p class="fit-note"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5v15M4 7l6-4.5L16 7M3 10h14"/></svg>Secure Share is on the roadmap; RepairReply runs on the EMS export today. Not affiliated with CCC Intelligent Solutions.</p>
   </div>
 </section>
 
-<section id="setup">
+<section id="setup" class="warm">
   <div class="wrap">
     <div class="sec-head">
-      <span class="label">Setup</span>
       <h2>Thirty minutes, once, on the phone with us.</h2>
+      <p class="lede">We set it up with you. No change to how you write estimates.</p>
     </div>
-    <div class="rule three">
-      <div class="tick"><div class="t">10 minutes</div><h3>Point it at your export folder</h3><p>CCC ONE already saves EMS files. We show you the two checkboxes and where the folder lives.</p></div>
-      <div class="tick"><div class="t">15 minutes</div><h3>Get your texting number</h3><p>A local number registered to your shop's name, so texts arrive as you, not as a short code.</p></div>
-      <div class="tick"><div class="t">5 minutes</div><h3>Read the templates, change what you like</h3><p>Three texts, your wording. Leave auto-send off and tap Send on each batch until you trust it.</p></div>
-    </div>
+    <ol class="steps">
+      <li><span class="n">Step 1</span><h3>Point it at your export folder</h3><p>CCC ONE saves EMS files. We show you which boxes to check and where the folder lives.</p></li>
+      <li><span class="n">Step 2</span><h3>Get your texting number</h3><p>A local number on your shop's name, so texts arrive as you, not as a short code.</p></li>
+      <li><span class="n">Step 3</span><h3>Read the templates</h3><p>Every text, in your wording. Change what you like, and leave auto-send off until you trust it.</p></li>
+    </ol>
   </div>
 </section>
 
 <section id="pricing">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="label">Pricing</span>
-      <h2>One price per location.</h2>
-      <p class="lede">Three closed repairs a year cover it.</p>
-    </div>
+    <div class="sec-head" style="text-align:center;margin-left:auto;margin-right:auto"><h2 style="margin:0 auto">One price. Your first month is free.</h2></div>
     <div class="price">
       <div>
-        <div class="amt">$199<small>a month, per location. No contract.</small></div>
-        <ul class="incl">
-          <li><span>Texts</span><div>Up to 1,000 a month included, more at cost</div></li>
-          <li><span>Included</span><div>Two-way inbox, booking, Google Calendar sync, Insights</div></li>
-          <li><span>Your number</span><div>A local texting number registered to your shop</div></li>
-          <li><span>Setup</span><div>Done with you over the phone, about 30 minutes</div></li>
-          <li><span>Leaving</span><div>Cancel any time and keep your data</div></li>
-        </ul>
-        <a class="btn btn-red" href="#start">Start 30 days free</a>
+        <h3>Per location</h3>
+        <p class="amt"><b>$199</b><span>a month</span></p>
+        <p class="lede">The funnel from your free month shows you, in your own numbers, how many quiet estimates turned into repairs. No contract, cancel any time.</p>
+        <a class="btn" href="#start">Start 30 days free</a>
       </div>
-      <div class="price-aside">
-        <p><b>Why 30 days free.</b> The first month's funnel shows you, in your own numbers, how many quiet estimates turned into conversations and how many of those turned into repairs. Decide after that.</p>
-        <p><b>What it's worth.</b> At the first shop the average repair closed after a text was about $2,500. Three of those pay for a year.</p>
-        <p><b>No card to start.</b> We set up the number and templates with you first. Billing starts only if you keep it.</p>
+      <div>
+        <h3>What's included</h3>
+        <dl>
+          <div><dt>Texts</dt><dd>Up to 1,000 a month, more at cost</dd></div>
+          <div><dt>Follow-ups</dt><dd>24-hour and 3-day texts, day-before reminder, review request</dd></div>
+          <div><dt>Inbox</dt><dd>Two-way, from your phone or the shop PC</dd></div>
+          <div><dt>Booking</dt><dd>Mark scheduled, Google Calendar sync</dd></div>
+          <div><dt>Insights</dt><dd>Funnel updated hourly from your CCC exports</dd></div>
+          <div><dt>Your number</dt><dd>A local texting number on your shop's name</dd></div>
+          <div><dt>Setup</dt><dd>Done with you over the phone</dd></div>
+        </dl>
       </div>
     </div>
   </div>
 </section>
 
-<section id="faq">
+<section id="faq" class="band">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="label">Questions shops ask</span>
-      <h2>Straight answers.</h2>
-    </div>
-    <div class="faq">
-      <details><summary>Do I have to change how I write estimates?</summary><p>No. CCC ONE keeps working exactly as it does now. RepairReply reads the EMS file it already saves. If you are on cccone.com, the same export exists there.</p></details>
-      <details><summary>Will customers get texts for jobs I already approved or cancelled?</summary><p>No. The sequence stops when a job is booked, cancelled, or when the customer replies. A text that is more than two days overdue is dropped, never sent late.</p></details>
-      <details><summary>Whose number do the texts come from?</summary><p>Yours. We register a local number to your shop's name through Twilio. Replies to that number come to your inbox and, if you want, forward to your cell.</p></details>
-      <details><summary>Can I keep sending texts myself?</summary><p>Yes. Leave auto-send off and every text waits for you to tap Send. Many shops run it that way for the first few weeks, then switch it on.</p></details>
-      <details><summary>What about CCC Secure Share?</summary><p>EMS export works today on both CCC ONE desktop and cccone.com. A Secure Share connection is on the roadmap so shops can switch as CCC rolls it out, with no change on your side.</p></details>
-      <details><summary>Where does my customer data live?</summary><p>In a database that belongs to your shop. Nothing is pooled across shops, and nothing is sold. Only Twilio (to send texts) and Google (if you connect your calendar) ever see a message, through your own accounts.</p></details>
-    </div>
+    <div class="sec-head"><h2>Straight answers.</h2></div>
+    <dl class="qa">
+      <div><dt>Do I have to change how I write estimates?</dt><dd>No. CCC ONE keeps working exactly as it does now. RepairReply reads the EMS file it saves.</dd></div>
+      <div><dt>Will customers get texts for jobs I already approved or cancelled?</dt><dd>No. The sequence stops when a job is booked, cancelled, or when the customer replies. A text that's gone stale is dropped, never sent late.</dd></div>
+      <div><dt>Whose number do the texts come from?</dt><dd>Yours. A local number on your shop's name. Replies come to your inbox.</dd></div>
+      <div><dt>Can I keep sending texts myself?</dt><dd>Yes. Leave auto-send off and every text waits for you to tap Send.</dd></div>
+      <div><dt>What about CCC Secure Share?</dt><dd>RepairReply runs on the EMS export today. A Secure Share connection is on the roadmap.</dd></div>
+      <div><dt>What happens to my customer data?</dt><dd>It stays your shop's data. Twilio carries the texts. Google sees appointments only if you connect your calendar.</dd></div>
+    </dl>
   </div>
 </section>
 
-<section id="start" class="go">
-  <div class="wrap">
+<section id="start" class="red">
+  <div class="wrap start">
     <div>
-      <span class="tape">Start free</span>
       <h2>Tell us your shop. We'll text you back.</h2>
-      <p class="lede" style="margin-top:16px">Thirty minutes on the phone to set it up, then thirty days to see your own numbers. No card needed to start.</p>
+      <p class="lede">We set it up with you by phone, then you get a month to see your own numbers. We text once to find a time. No list, no drip campaign.</p>
     </div>
     <form class="form" id="form" novalidate>
-      <div class="fields">
-        <div class="row2">
-          <div><label for="f-shop">Shop name</label><input id="f-shop" name="shop" autocomplete="organization" required></div>
-          <div><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
-        </div>
-        <div class="row2">
-          <div><label for="f-phone">Cell number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
-          <div><label for="f-city">City</label><input id="f-city" name="city" autocomplete="address-level2"></div>
-        </div>
-        <button class="btn btn-red" type="submit">Text me to set it up</button>
-        <p class="fine">We text once to find a time. No list, no drip campaign.</p>
+      <div class="two">
+        <div><label for="f-shop">Shop name</label><input id="f-shop" name="shop" autocomplete="organization" required></div>
+        <div><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required></div>
       </div>
-      <div class="done">Got it. You'll hear from us by text, usually the same day.</div>
+      <div class="two">
+        <div><label for="f-phone">Cell number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required placeholder="(555) 555-0100"></div>
+        <div><label for="f-city">City</label><input id="f-city" name="city" autocomplete="address-level2"></div>
+      </div>
+      <button class="btn" type="submit">Start 30 days free</button>
+      <p class="fine">Then $199 a month per location. Cancel any time.</p>
+      <p class="msg" id="msg" role="status"></p>
     </form>
   </div>
 </section>
 
 </main>
-
+<dialog class="lb" id="lb" aria-label="RepairReply in 35 seconds">
+  <div class="lb-in">
+    <button class="lb-close" type="button" id="lb-close" aria-label="Close video"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+    <video id="lb-video" controls playsinline preload="none" poster="media/promo-poster.jpg" aria-label="RepairReply in 35 seconds">
+      <track kind="captions" src="media/promo.vtt" srclang="en" label="English" default>
+    </video>
+    <p class="lb-cap">Music, captions on. Northside Collision is not a real shop.</p>
+  </div>
+</dialog>
 <footer>
   <div class="wrap">
-    <div>RepairReply · built by a software engineer for a working body shop, in production since May 2026.</div>
-    <div>Not affiliated with CCC Intelligent Solutions. CCC ONE is their trademark.</div>
+    <span>RepairReply. Built by a software engineer for a working body shop, in production since May 2026.</span>
+    <span class="legal">Not affiliated with CCC Intelligent Solutions. CCC ONE is their trademark.</span>
   </div>
 </footer>
-
 <script>
 (function(){
-  var t=document.getElementById('thread'); if(!t) return;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){t.classList.add('play');return;}
-  var steps=t.querySelectorAll('[data-step]'), i=0, delays={1:200,2:900,3:1500,4:700,5:1000,6:900,7:800};
-  (function next(){
-    if(i>=steps.length){t.classList.add('play');return;}
-    var n=steps[i].getAttribute('data-step'), batch=[];
-    while(i<steps.length&&steps[i].getAttribute('data-step')===n){batch.push(steps[i]);i++;}
-    setTimeout(function(){batch.forEach(function(el){el.style.opacity=1;el.style.transform='none';});next();},delays[n]||600);
-  })();
-})();
-// Funnel bars grow once when they scroll into view.
-(function(){
-  var f=document.getElementById('funnel'); if(!f||!('IntersectionObserver' in window)) return;
-  var bars=f.querySelectorAll('.bar i'), target=[];
-  bars.forEach(function(b){target.push(b.style.getPropertyValue('--w'));b.style.setProperty('--w','0%');});
-  var fill=function(){bars.forEach(function(b,k){b.style.setProperty('--w',target[k]);});};
-  var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){fill();o.disconnect();}});},{threshold:.15});
-  o.observe(f); setTimeout(fill,4000);
-})();
-document.getElementById('form').addEventListener('submit',function(e){
-  e.preventDefault(); var f=e.target;
-  if(!f.shop.value||!f.name.value||!f.phone.value){f.reportValidity();return;}
-  f.classList.add('sent');
+var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.add('js');
+
+/* The recordings: load when near, play while on screen. Reduced motion: wait for Play, show controls. */
+var loops=[].slice.call(document.querySelectorAll('.loop'));
+loops.forEach(function(box){
+  var v=box.querySelector('video'), b=box.querySelector('.play');
+  function load(){ if(!v.src){ v.src=v.dataset.src; v.load(); } }
+  if(still){ box.classList.add('paused'); v.controls=true; v.loop=false; b.addEventListener('click',function(){ load(); box.classList.remove('paused'); v.play(); }); return; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ load(); v.play().catch(function(){ box.classList.add('paused'); }); } else { v.pause(); } }); },{rootMargin:'200px 0px'});
+  io.observe(box);
+  b.addEventListener('click',function(){ load(); box.classList.remove('paused'); v.play(); });
 });
+var lb=document.getElementById('lb'), lbv=document.getElementById('lb-video'), watch=document.getElementById('watch');
+function openLb(){
+  var tall=matchMedia('(max-width:640px) and (orientation:portrait)').matches;
+  var src=tall?'media/promo-9x16.mp4':'media/promo-16x9.mp4';
+  if(lbv.getAttribute('data-src')!==src){ lbv.setAttribute('data-src',src); lbv.src=src; lbv.classList.toggle('tall',tall); }
+  loops.forEach(function(s){ s.querySelector('video').pause(); });
+  lb.showModal(); lbv.play().catch(function(){});
+}
+function closeLb(){ lbv.pause(); if(lb.open) lb.close(); }
+watch.addEventListener('click',openLb);
+document.getElementById('lb-close').addEventListener('click',closeLb);
+lb.addEventListener('close',function(){ lbv.pause(); watch.focus(); });
+lb.addEventListener('click',function(e){ if(e.target===lb) closeLb(); });
+var promo=document.getElementById('promo');
+promo.addEventListener('play',function(){ loops.forEach(function(s){ s.querySelector('video').pause(); }); promo.controls=true; promo.closest('.win').classList.add('playing'); });
+document.getElementById('bigplay').addEventListener('click',function(){ promo.play(); });
+
+/* The conversation plays once when it comes into view. */
+var convo=document.getElementById('convo');
+if(still){ convo.classList.add('go'); }
+else { var cio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ convo.classList.add('go'); cio.disconnect(); } }); },{threshold:.35}); cio.observe(convo); }
+
+/* Lead form. No endpoint is connected yet, and the page says so instead of pretending. */
+var FORM_ENDPOINT='';
+var f=document.getElementById('form'), msg=document.getElementById('msg');
+f.addEventListener('submit',function(e){
+  e.preventDefault(); var bad=null;
+  ['phone','name','shop'].forEach(function(n){ var el=f.elements[n], miss=!el.value.trim(); el.setAttribute('aria-invalid',miss); if(miss) bad=el; });
+  msg.classList.toggle('err',!!bad||!FORM_ENDPOINT);
+  if(bad){ msg.textContent='Fill in your shop name, your name and a cell number.'; bad.focus(); return; }
+  if(!FORM_ENDPOINT){ msg.textContent="This form isn't connected yet, so nothing was sent."; return; }
+  msg.classList.remove('err'); msg.textContent='Sending...';
+  fetch(FORM_ENDPOINT,{method:'POST',body:new FormData(f)}).then(function(r){ if(!r.ok) throw 0; f.reset(); msg.textContent="Got it. You'll hear from us by text."; })
+  .catch(function(){ msg.classList.add('err'); msg.textContent="That didn't send. Check your connection and try again."; });
+});
+})();
 </script>
 </body>
 </html>
